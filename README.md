@@ -42,5 +42,5 @@ module.exports = {
 Snipped
 
 ```
-rnfes
+rnfe
 ```
