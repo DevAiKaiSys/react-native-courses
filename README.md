@@ -51,6 +51,12 @@ npx expo install react-native-appwrite react-native-url-polyfill
 
 [Start with Databases](https://appwrite.io/docs/products/databases/quick-start)
 
+React Native MaskedView
+
+```bash
+npm install --save @react-native-masked-view/masked-view
+```
+
 ## Components
 
 [FlatList](https://reactnative.dev/docs/flatlist)
