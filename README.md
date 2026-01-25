@@ -43,6 +43,10 @@ module.exports = {
 
 [discover-movie](https://developer.themoviedb.org/reference/discover-movie)
 
+## Components
+
+[FlatList](https://reactnative.dev/docs/flatlist)
+
 ## Tips
 
 Snipped
