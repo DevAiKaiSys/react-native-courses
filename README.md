@@ -43,6 +43,14 @@ module.exports = {
 
 [discover-movie](https://developer.themoviedb.org/reference/discover-movie)
 
+### [Appwrite](https://appwrite.io)
+
+```bash
+npx expo install react-native-appwrite react-native-url-polyfill
+```
+
+[Start with Databases](https://appwrite.io/docs/products/databases/quick-start)
+
 ## Components
 
 [FlatList](https://reactnative.dev/docs/flatlist)
