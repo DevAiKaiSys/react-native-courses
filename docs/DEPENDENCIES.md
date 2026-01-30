@@ -32,3 +32,5 @@ npm install @react-navigation/native-stack
 ```bash
 npm install @react-navigation/bottom-tabs
 ```
+
+Custom screen tab Icon [Options for screens](https://reactnavigation.org/docs/screen-options/)
