@@ -11,9 +11,7 @@ npx react-native run-ios
 ```
 
 ```bash
-cd ios
-pod install
-cd ..
+npx pod-install ios
 npx react-native run-ios
 ```
 
