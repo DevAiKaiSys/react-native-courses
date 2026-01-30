@@ -5,3 +5,4 @@
 
 ### 🛠 Tools & Libraries
 - [Lucide React Native](https://lucide.dev/guide/packages/lucide-react-native)
+- [Moti](https://moti.fyi/installation)

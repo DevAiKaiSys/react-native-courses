@@ -1,5 +1,5 @@
 ```bash
-npx react-native run-ios
+npx react-native run-android
 ```
 
 ```bash
@@ -15,4 +15,12 @@ cd ios
 pod install
 cd ..
 npx react-native run-ios
+```
+
+```bash
+cd android && ./gradlew clean && cd ..
+```
+
+```bash
+npm start -- --reset-cache
 ```
