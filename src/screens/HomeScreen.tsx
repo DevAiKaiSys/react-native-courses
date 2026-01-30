@@ -1,7 +1,7 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { COLORS, FONT_FAMILY, homeTitle } from '../constants'
+import { categories, COLORS, FONT_FAMILY, homeTitle } from '../constants'
 import { MotiView } from 'moti'
 import { Search, X } from 'lucide-react-native'
 
@@ -11,6 +11,10 @@ const HomeScreen = () => {
   ); */
   const animatedTitle = homeTitle.trim().split(/\s+/);
   const [searchText, setSearchText] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState({
+    index: 0,
+    category: categories[0],
+  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -74,6 +78,71 @@ const HomeScreen = () => {
           </TouchableOpacity>
         )}
       </MotiView>
+      {/* Category Filter */}
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.categoryContainerStyle}
+        data={categories}
+        renderItem={({ index, item }) => (
+          <MotiView
+            from={{
+              opacity: 0,
+              translateY: 10,
+            }}
+            animate={{
+              opacity: 1,
+              translateY: 0
+            }}
+            transition={{
+              type: 'spring',
+              damping: 12,
+              stiffness: 150,
+              delay: index * 200,
+            }}
+            key={index.toString()}
+            style={styles.categoryAnimatedView}
+          >
+            <TouchableOpacity
+              style={styles.categoryButton}
+              onPress={() => {
+                setSelectedCategory({
+                  index: index,
+                  category: categories[index],
+                });
+              }}
+            >
+              <Text
+                style={[
+                  styles.categoryTitle,
+                  {
+                    color:
+                      selectedCategory.index === index
+                        ? COLORS.primaryOrange
+                        : COLORS.primaryLightGrey,
+                  },
+                ]}
+              >
+                {item}
+              </Text>
+              {/* circle */}
+              {selectedCategory.index === index && (
+                <MotiView
+                  from={{
+                    opacity: 0,
+                    translateY: 10,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    translateY: 0,
+                  }}
+                  style={styles.activeCircle}
+                />
+              )}
+            </TouchableOpacity>
+          </MotiView>
+        )}
+      />
       <Text>HomeScreen</Text>
     </SafeAreaView >
   )
@@ -116,5 +185,26 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.poppins_medium,
     fontSize: 14,
     color: COLORS.primaryDarkGrey,
+  },
+  categoryContainerStyle: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  categoryAnimatedView: {
+    paddingHorizontal: 15,
+  },
+  categoryButton: {
+    alignItems: 'center',
+  },
+  categoryTitle: {
+    fontFamily: FONT_FAMILY.poppins_semibold,
+    fontSize: 16,
+    marginBottom: 4,
+  },
+  activeCircle: {
+    height: 10,
+    width: 10,
+    borderRadius: 10,
+    backgroundColor: COLORS.primaryOrange,
   },
 })

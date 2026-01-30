@@ -286,4 +286,5 @@ export {
     COLORS,
     FONT_FAMILY,
     homeTitle,
+    categories
 };
