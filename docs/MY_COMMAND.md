@@ -22,3 +22,7 @@ cd android && ./gradlew clean && cd ..
 ```bash
 npm start -- --reset-cache
 ```
+
+```bash
+npx react-native-asset
+```

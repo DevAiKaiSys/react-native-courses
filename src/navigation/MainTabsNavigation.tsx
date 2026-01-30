@@ -19,6 +19,7 @@ const Icon = ({ name, color, size }: IconProps) => {
 
 export const MainTabsNavigation = createBottomTabNavigator({
     screenOptions: ({ route }) => ({
+        headerShown: false,
         tabBarIcon: ({ color, size }) => {
             const iconMaps: Record<string, keyof typeof icons> = {
                 Home: 'House',
