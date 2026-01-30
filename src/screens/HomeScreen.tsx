@@ -1,9 +1,10 @@
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { categories, COLORS, FONT_FAMILY, homeTitle } from '../constants'
+import { categories, COLORS, FONT_FAMILY, homeTitle, ProductDataSample } from '../constants'
 import { MotiView } from 'moti'
 import { Search, X } from 'lucide-react-native'
+import ProductCard from '../components/ProductCard'
 
 const HomeScreen = () => {
   /* const animatedTitle = [...homeTitle.split(' '), '"'].filter(
@@ -143,6 +144,20 @@ const HomeScreen = () => {
           </MotiView>
         )}
       />
+      {/* Products Section */}
+      <FlatList
+        style={styles.productContainerFlatlist}
+        data={ProductDataSample}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={item => item.name}
+        renderItem={({ index, item }) => (
+          <TouchableOpacity>
+            <MotiView>
+              <ProductCard />
+            </MotiView>
+          </TouchableOpacity>
+        )}
+      />
       <Text>HomeScreen</Text>
     </SafeAreaView >
   )
@@ -206,5 +221,10 @@ const styles = StyleSheet.create({
     width: 10,
     borderRadius: 10,
     backgroundColor: COLORS.primaryOrange,
+  },
+  productContainerFlatlist: {
+    paddingVertical: 20,
+    paddingBottom: 180,
+    paddingHorizontal: 30,
   },
 })

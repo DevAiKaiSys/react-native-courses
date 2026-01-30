@@ -286,5 +286,6 @@ export {
     COLORS,
     FONT_FAMILY,
     homeTitle,
-    categories
+    categories,
+    ProductDataSample,
 };
