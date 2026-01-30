@@ -1,14 +1,16 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { COLORS, FONT_FAMILY, homeTitle } from '../constants'
 import { MotiView } from 'moti'
+import { Search, X } from 'lucide-react-native'
 
 const HomeScreen = () => {
   /* const animatedTitle = [...homeTitle.split(' '), '"'].filter(
     word => word !== '"',
   ); */
   const animatedTitle = homeTitle.trim().split(/\s+/);
+  const [searchText, setSearchText] = useState('');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -33,8 +35,47 @@ const HomeScreen = () => {
           </MotiView>
         ))}
       </View>
+      {/* Input */}
+      <MotiView
+        from={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          type: 'spring',
+          damping: 20,
+          stiffness: 50,
+          delay: 300,
+        }}
+        style={styles.inputContainer}>
+        <Search
+          style={styles.icon}
+          size={18}
+          color={
+            searchText.length > 0
+              ? COLORS.primaryOrange
+              : COLORS.primaryLightGrey
+          }
+        />
+        <TextInput
+          placeholder="Find Your Product..."
+          style={styles.textInput}
+          value={searchText}
+          onChangeText={setSearchText}
+          placeholderTextColor={COLORS.primaryLightGrey}
+        />
+        {searchText.length > 0 && (
+          <TouchableOpacity
+            onPress={() => setSearchText('')}
+          >
+            <X
+              style={styles.icon}
+              color={COLORS.primaryLightGrey}
+              size={16}
+            />
+          </TouchableOpacity>
+        )}
+      </MotiView>
       <Text>HomeScreen</Text>
-    </SafeAreaView>
+    </SafeAreaView >
   )
 }
 
@@ -57,5 +98,23 @@ const styles = StyleSheet.create({
     rowGap: 3,
     flexWrap: 'wrap',
     paddingHorizontal: 20,
+  },
+  inputContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: COLORS.primaryVeryWhite,
+    borderRadius: 20,
+    margin: 30,
+    alignItems: 'center',
+  },
+  icon: {
+    marginHorizontal: 20,
+  },
+  textInput: {
+    flex: 1,
+    height: 60,
+    fontFamily: FONT_FAMILY.poppins_medium,
+    fontSize: 14,
+    color: COLORS.primaryDarkGrey,
   },
 })
