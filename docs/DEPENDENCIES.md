@@ -34,3 +34,10 @@ npm install @react-navigation/bottom-tabs
 ```
 
 Custom screen tab Icon [Options for screens](https://reactnavigation.org/docs/screen-options/)
+
+# [React Native Reanimated Carousel](https://rn-carousel.dev)
+
+```bash
+npm install react-native-reanimated react-native-gesture-handler
+npm install react-native-reanimated-carousel
+```

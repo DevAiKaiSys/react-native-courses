@@ -4,7 +4,7 @@ import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../types';
 import { COLORS, ProductDataSample } from '../constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeft, Scroll } from 'lucide-react-native';
+import { ArrowLeft, Star } from 'lucide-react-native';
 import ImageSlider from '../components/ImageSlider';
 import { MotiView } from 'moti';
 
@@ -22,14 +22,15 @@ const ProductDetailsScreen = () => {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollView}
             >
-                <TouchableOpacity onPress={() => navigation.goBack()}
-                    style={styles.backButton}>
-                    <ArrowLeft
-                        color={COLORS.primaryLightGrey}
-                        size={15} />
-                </TouchableOpacity>
+                {/* header & img slider */}
                 <MotiView>
-                    <ImageSlider />
+                    <TouchableOpacity onPress={() => navigation.goBack()}
+                        style={styles.backButton}>
+                        <ArrowLeft
+                            color={COLORS.primaryLightGrey}
+                            size={15} />
+                    </TouchableOpacity>
+                    <ImageSlider imageLists={productItem.images} />
                 </MotiView>
             </ScrollView>
             <Text>ProductDetailsScreen {productItem.name}</Text>
