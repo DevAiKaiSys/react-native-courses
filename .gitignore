@@ -2,6 +2,10 @@
 #
 .DS_Store
 
+# My Ignores
+#
+Gemfile.lock
+
 # Xcode
 #
 build/
