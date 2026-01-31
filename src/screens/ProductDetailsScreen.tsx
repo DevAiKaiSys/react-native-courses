@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../types';
@@ -6,15 +6,19 @@ import { COLORS, FONT_FAMILY, ProductDataSample } from '../constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, Star } from 'lucide-react-native';
 import ImageSlider from '../components/ImageSlider';
-import { MotiView } from 'moti';
+import { MotiText, MotiView } from 'moti';
+import { MotiPressable } from 'moti/interactions';
 
 type ProductDetailsScreenProp = RouteProp<RootStackParamList, 'ProductDetails'>;
 const ProductDetailsScreen = () => {
     const route = useRoute<ProductDetailsScreenProp>();
     const { _id } = route.params;
+    const navigation = useNavigation();
     // dummy data..
     const productItem = ProductDataSample.filter(item => item._id === _id)[0];
-    const navigation = useNavigation();
+    const animatedTitle = [...productItem.name.split(' '), '"'].filter(
+        word => word !== '"',
+    );
 
     return (
         <SafeAreaView style={styles.screenContainer}>
@@ -47,6 +51,40 @@ const ProductDetailsScreen = () => {
                         </Text>
                     </Text>
                 </MotiView>
+                <View style={styles.titleContainer}>
+                    {animatedTitle.map((text, index) => (
+                        <MotiView
+                            key={index}
+                            from={{
+                                opacity: 0,
+                                translateY: 10,
+                            }}
+                            animate={{
+                                opacity: 1,
+                                translateY: 0,
+                            }}
+                            transition={{
+                                type: 'spring',
+                                delay: index * 250,
+                            }}>
+                            <Text style={styles.titleText}>{text}</Text>
+                        </MotiView>
+                    ))}
+                </View>
+                {/* desc & size */}
+                <View style={styles.footerInfoArea}>
+                    {/* desc title */}
+                    <MotiText style={styles.infoTitle}>
+                        Description
+                    </MotiText>
+                    <MotiText style={styles.descText}>
+                        {productItem.description}
+                    </MotiText>
+                    {/* size */}
+                    <MotiText style={styles.infoTitle}>
+                        Size
+                    </MotiText>
+                </View>
             </ScrollView>
         </SafeAreaView>
     )
@@ -108,5 +146,34 @@ const styles = StyleSheet.create({
     cardPriceAmount: {
         color: COLORS.primaryBlack,
         fontSize: 25,
+    },
+    titleText: {
+        fontSize: 22,
+        fontFamily: FONT_FAMILY.poppins_semibold,
+        color: COLORS.primaryBlack,
+        paddingLeft: 5,
+    },
+    titleContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        rowGap: 3,
+        flexWrap: 'wrap',
+        paddingTop: 8,
+        paddingHorizontal: 10,
+    },
+    footerInfoArea: {
+        padding: 20,
+    },
+    infoTitle: {
+        fontSize: 16,
+        fontFamily: FONT_FAMILY.poppins_semibold,
+        color: COLORS.primaryBlack,
+        marginTop: 18,
+    },
+    descText: {
+        fontSize: 14,
+        fontFamily: FONT_FAMILY.poppins_regular,
+        color: COLORS.primaryGrey,
+        marginTop: 3,
     },
 })

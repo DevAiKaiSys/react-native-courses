@@ -5,6 +5,8 @@
 # My Ignores
 #
 Gemfile.lock
+package-lock.json
+ios/Podfile.lock
 
 # Xcode
 #
