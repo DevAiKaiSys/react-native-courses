@@ -1,5 +1,5 @@
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../types';
 import { COLORS, FONT_FAMILY, ProductDataSample } from '../constants';
@@ -8,6 +8,7 @@ import { ArrowLeft, Star } from 'lucide-react-native';
 import ImageSlider from '../components/ImageSlider';
 import { MotiText, MotiView } from 'moti';
 import { MotiPressable } from 'moti/interactions';
+import PaymentFooter from '../components/PaymentFooter';
 
 type ProductDetailsScreenProp = RouteProp<RootStackParamList, 'ProductDetails'>;
 const ProductDetailsScreen = () => {
@@ -21,102 +22,218 @@ const ProductDetailsScreen = () => {
     );
     const [price, setPrice] = useState(productItem.prices[0]);
 
+    // animation
+    const [step, setStep] = useState(0);
+    // small delay before creating first animation
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setStep(1);
+        }, 200);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <SafeAreaView style={styles.screenContainer}>
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollView}
             >
-                {/* header & img slider */}
-                <MotiView>
-                    <TouchableOpacity onPress={() => navigation.goBack()}
-                        style={styles.backButton}>
-                        <ArrowLeft
-                            color={COLORS.primaryLightGrey}
-                            size={15} />
-                    </TouchableOpacity>
-                    <ImageSlider imageLists={productItem.images} />
-                </MotiView>
-                {/* rating & price */}
-                <MotiView style={styles.ratingContainer}>
-                    <View style={styles.ratingValueContainer}>
-                        <Star color={COLORS.primaryOrange} size={16} />
-                        <Text style={styles.ratingText}>
-                            {productItem.average_rating}
+                <View>
+                    {/* header & img slider */}
+                    <MotiView
+                        from={{ opacity: 0, translateY: 15 }}
+                        animate={{ opacity: 1, translateY: 0 }}
+                        onDidAnimate={(key, finished) => {
+                            if (key === 'opacity' && finished && step === 1) {
+                                setStep(2); // trigger next step
+                            }
+                        }}
+                    >
+                        <TouchableOpacity onPress={() => navigation.goBack()}
+                            style={styles.backButton}>
+                            <ArrowLeft
+                                color={COLORS.primaryLightGrey}
+                                size={15} />
+                        </TouchableOpacity>
+                        <ImageSlider imageLists={productItem.images} />
+                    </MotiView>
+                    {/* rating & price */}
+                    <MotiView
+                        from={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: step >= 2 ? 1 : 0, scale: step >= 2 ? 1 : 0.5 }}
+                        onDidAnimate={(key, finished) => {
+                            if (key === 'opacity' && finished && step === 2) {
+                                setStep(3); // trigger next step
+                            }
+                        }}
+                        transition={{
+                            type: 'spring',
+                            damping: 20,
+                            stiffness: 50,
+                            delay: 300,
+                        }}
+                        style={styles.ratingContainer}>
+                        <View style={styles.ratingValueContainer}>
+                            <Star color={COLORS.primaryOrange} size={16} />
+                            <Text style={styles.ratingText}>
+                                {productItem.average_rating}
+                            </Text>
+                        </View>
+                        <Text style={styles.cardPriceCurrency}>
+                            ${' '}
+                            <Text style={styles.cardPriceAmount}>
+                                {productItem.prices[0].price}
+                            </Text>
                         </Text>
+                    </MotiView>
+                    <View style={styles.titleContainer}>
+                        {animatedTitle.map((text, index) => (
+                            <MotiView
+                                key={index}
+                                from={{
+                                    opacity: 0,
+                                    translateY: 10,
+                                }}
+                                animate={{
+                                    opacity: step >= 3 ? 1 : 0,
+                                    translateY: step >= 3 ? 0 : 10,
+                                }}
+                                transition={{
+                                    type: 'spring',
+                                    delay: index * 250,
+                                }}
+                                onDidAnimate={(key, finished) => {
+                                    if (key === 'opacity' && finished && step === 3) {
+                                        setStep(4); // trigger next step
+                                    }
+                                }}
+                            >
+                                <Text style={styles.titleText}>{text}</Text>
+                            </MotiView>
+                        ))}
                     </View>
-                    <Text style={styles.cardPriceCurrency}>
-                        ${' '}
-                        <Text style={styles.cardPriceAmount}>
-                            {productItem.prices[0].price}
-                        </Text>
-                    </Text>
-                </MotiView>
-                <View style={styles.titleContainer}>
-                    {animatedTitle.map((text, index) => (
-                        <MotiView
-                            key={index}
+                    {/* desc & size */}
+                    <View style={styles.footerInfoArea}>
+                        {/* desc title */}
+                        <MotiText
                             from={{
                                 opacity: 0,
                                 translateY: 10,
                             }}
                             animate={{
-                                opacity: 1,
-                                translateY: 0,
+                                opacity: step >= 4 ? 1 : 0,
+                                translateY: step >= 4 ? 0 : 10,
                             }}
                             transition={{
                                 type: 'spring',
-                                delay: index * 250,
-                            }}>
-                            <Text style={styles.titleText}>{text}</Text>
-                        </MotiView>
-                    ))}
-                </View>
-                {/* desc & size */}
-                <View style={styles.footerInfoArea}>
-                    {/* desc title */}
-                    <MotiText style={styles.infoTitle}>
-                        Description
-                    </MotiText>
-                    <MotiText style={styles.descText}>
-                        {productItem.description}
-                    </MotiText>
-                    {/* size */}
-                    <MotiText style={styles.infoTitle}>
-                        Size
-                    </MotiText>
-                    {/* size selection */}
-                    <View style={styles.sizeOuterContainer}>
-                        {productItem.prices.map((item, index) => (
-                            <MotiPressable
-                                onPress={() => setPrice(item)}
-                                style={[
-                                    styles.sizeBox,
-                                    {
-                                        borderColor:
-                                            item.size === price.size
-                                                ? COLORS.primaryOrange
-                                                : COLORS.primaryGrey,
-                                    },
-                                ]}
-                                key={index}
-                            >
-                                <Text style={[
-                                    styles.sizeTextBox,
-                                    {
-                                        color:
-                                            item.size === price.size
-                                                ? COLORS.primaryOrange
-                                                : COLORS.primaryGrey,
-                                    },
-                                ]}>
-                                    {' '}
-                                    {item.size}{' '}
-                                </Text>
-                            </MotiPressable>
-                        ))}
+                                delay: 250,
+                            }}
+                            onDidAnimate={(key, finished) => {
+                                if (key === 'opacity' && finished && step === 4) {
+                                    setStep(5); // trigger next step
+                                }
+                            }}
+                            style={styles.infoTitle}
+                        >
+                            Description
+                        </MotiText>
+                        <MotiText
+                            from={{
+                                opacity: 0,
+                            }}
+                            animate={{
+                                opacity: step >= 5 ? 1 : 0,
+                            }}
+                            transition={{
+                                type: 'spring',
+                            }}
+                            onDidAnimate={(key, finished) => {
+                                if (key === 'opacity' && finished && step === 5) {
+                                    setStep(6); // trigger next step
+                                }
+                            }}
+                            style={styles.descText}
+                        >
+                            {productItem.description}
+                        </MotiText>
+                        {/* size */}
+                        <MotiText
+                            from={{
+                                opacity: 0,
+                                translateY: 10,
+                            }}
+                            animate={{
+                                opacity: step >= 6 ? 1 : 0,
+                                translateY: step >= 6 ? 0 : 10,
+                            }}
+                            transition={{
+                                type: 'spring',
+                                delay: 250,
+                            }}
+                            onDidAnimate={(key, finished) => {
+                                if (key === 'opacity' && finished && step === 6) {
+                                    setStep(7); // trigger next step
+                                }
+                            }}
+                            style={styles.infoTitle}
+                        >
+                            Size
+                        </MotiText>
+                        {/* size selection */}
+                        <View style={styles.sizeOuterContainer}>
+                            {productItem.prices.map((item, index) => (
+                                <MotiPressable
+                                    from={{
+                                        opacity: 0,
+                                        translateY: 10,
+                                    }}
+                                    animate={{
+                                        opacity: step >= 7 ? 1 : 0,
+                                        translateY: step >= 7 ? 0 : 10,
+                                    }}
+                                    transition={{
+                                        type: 'spring',
+                                        delay: index * 250,
+                                    }}
+
+                                    onPress={() => {
+                                        setPrice(item);
+                                    }}
+                                    style={[
+                                        styles.sizeBox,
+                                        {
+                                            borderColor:
+                                                item.size === price.size
+                                                    ? COLORS.primaryOrange
+                                                    : COLORS.primaryGrey,
+                                        },
+                                    ]}
+                                    key={index}
+                                >
+                                    <Text style={[
+                                        styles.sizeTextBox,
+                                        {
+                                            color:
+                                                item.size === price.size
+                                                    ? COLORS.primaryOrange
+                                                    : COLORS.primaryGrey,
+                                        },
+                                    ]}>
+                                        {' '}
+                                        {item.size}{' '}
+                                    </Text>
+                                </MotiPressable>
+                            ))}
+                        </View>
                     </View>
                 </View>
+
+                <PaymentFooter
+                    price={price.price}
+                    onPress={() => { }}
+                    buttonTitle={'Add To Cart'}
+                    loading={false}
+                />
             </ScrollView>
         </SafeAreaView>
     )
