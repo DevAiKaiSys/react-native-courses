@@ -5,6 +5,9 @@ import { categories, COLORS, FONT_FAMILY, homeTitle, ProductDataSample } from '.
 import { MotiView } from 'moti'
 import { Search, X } from 'lucide-react-native'
 import ProductCard from '../components/ProductCard'
+import { useNavigation } from '@react-navigation/native'
+import { RootStackParamList } from '../types'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 const HomeScreen = () => {
   /* const animatedTitle = [...homeTitle.split(' '), '"'].filter(
@@ -12,6 +15,7 @@ const HomeScreen = () => {
   ); */
   const animatedTitle = homeTitle.trim().split(/\s+/);
   const [searchText, setSearchText] = useState('');
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [selectedCategory, setSelectedCategory] = useState({
     index: 0,
     category: categories[0],
@@ -205,7 +209,9 @@ const HomeScreen = () => {
             numColumns={2}
             keyExtractor={item => item.name}
             renderItem={({ index, item }) => (
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ProductDetails', { _id: item._id })}
+              >
                 <MotiView
                   from={{
                     opacity: 0,
