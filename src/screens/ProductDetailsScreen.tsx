@@ -1,5 +1,5 @@
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../types';
 import { COLORS, FONT_FAMILY, ProductDataSample } from '../constants';
@@ -19,6 +19,7 @@ const ProductDetailsScreen = () => {
     const animatedTitle = [...productItem.name.split(' '), '"'].filter(
         word => word !== '"',
     );
+    const [price, setPrice] = useState(productItem.prices[0]);
 
     return (
         <SafeAreaView style={styles.screenContainer}>
@@ -84,6 +85,37 @@ const ProductDetailsScreen = () => {
                     <MotiText style={styles.infoTitle}>
                         Size
                     </MotiText>
+                    {/* size selection */}
+                    <View style={styles.sizeOuterContainer}>
+                        {productItem.prices.map((item, index) => (
+                            <MotiPressable
+                                onPress={() => setPrice(item)}
+                                style={[
+                                    styles.sizeBox,
+                                    {
+                                        borderColor:
+                                            item.size === price.size
+                                                ? COLORS.primaryOrange
+                                                : COLORS.primaryGrey,
+                                    },
+                                ]}
+                                key={index}
+                            >
+                                <Text style={[
+                                    styles.sizeTextBox,
+                                    {
+                                        color:
+                                            item.size === price.size
+                                                ? COLORS.primaryOrange
+                                                : COLORS.primaryGrey,
+                                    },
+                                ]}>
+                                    {' '}
+                                    {item.size}{' '}
+                                </Text>
+                            </MotiPressable>
+                        ))}
+                    </View>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -175,5 +207,26 @@ const styles = StyleSheet.create({
         fontFamily: FONT_FAMILY.poppins_regular,
         color: COLORS.primaryGrey,
         marginTop: 3,
+    },
+    sizeOuterContainer: {
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 20,
+        marginTop: 8,
+    },
+    sizeBox: {
+        flex: 1,
+        backgroundColor: COLORS.primaryVeryWhite,
+        height: 48,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 10,
+        borderWidth: 2,
+        width: Dimensions.get('window').width * 0.26,
+    },
+    sizeTextBox: {
+        fontFamily: FONT_FAMILY.poppins_medium,
     },
 })
