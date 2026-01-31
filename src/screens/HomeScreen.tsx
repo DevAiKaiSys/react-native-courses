@@ -1,5 +1,5 @@
 import { Dimensions, FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { categories, COLORS, FONT_FAMILY, homeTitle, ProductDataSample } from '../constants'
 import { MotiView } from 'moti'
@@ -16,6 +16,22 @@ const HomeScreen = () => {
     index: 0,
     category: categories[0],
   });
+  const [step, setStep] = useState(0);
+  // small delay before creating first animation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStep(1);
+    }, 200);
+    return () => clearTimeout(timer);
+  }, []);
+  // filtered data
+  const AllCategories = selectedCategory.category === 'All';
+  const filteredProductsWithCategory = ProductDataSample?.filter(item =>
+    AllCategories ? item : item.category === selectedCategory.category,
+  );
+  const filteredProductsWithSearch = filteredProductsWithCategory?.filter(
+    item => item.name.toLowerCase().includes(searchText.toLowerCase()),
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -37,6 +53,11 @@ const HomeScreen = () => {
                 opacity: 1,
                 translateY: 0,
               }}
+              onDidAnimate={(key, finished) => {
+                if (key === 'opacity' && finished && step === 1) {
+                  setStep(2); // trigger next step
+                }
+              }}
               transition={{
                 type: 'spring',
                 delay: index * 250,
@@ -45,10 +66,15 @@ const HomeScreen = () => {
             </MotiView>
           ))}
         </View>
-        {/* Input */}
+        {/* Search Input */}
         <MotiView
           from={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
+          animate={{ opacity: step >= 2 ? 1 : 0, scale: step >= 2 ? 1 : 0.5 }}
+          onDidAnimate={(key, finished) => {
+            if (key === 'opacity' && finished && step === 2) {
+              setStep(3); // trigger next step
+            }
+          }}
           transition={{
             type: 'spring',
             damping: 20,
@@ -84,125 +110,137 @@ const HomeScreen = () => {
             </TouchableOpacity>
           )}
         </MotiView>
-        {/* Category Filter */}
-        <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoryContainerStyle}
-          data={categories}
-          renderItem={({ index, item }) => (
-            <MotiView
-              from={{
-                opacity: 0,
-                translateY: 10,
-              }}
-              animate={{
-                opacity: 1,
-                translateY: 0
-              }}
-              transition={{
-                type: 'spring',
-                damping: 12,
-                stiffness: 150,
-                delay: index * 200,
-              }}
-              key={index.toString()}
-              style={styles.categoryAnimatedView}
-            >
-              <TouchableOpacity
-                style={styles.categoryButton}
-                onPress={() => {
-                  setSelectedCategory({
-                    index: index,
-                    category: categories[index],
-                  });
+        <View>
+          {/* Category Filter */}
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoryContainerStyle}
+            data={categories}
+            renderItem={({ index, item }) => (
+              <MotiView
+                from={{
+                  opacity: 0,
+                  translateY: 10,
                 }}
+                animate={{
+                  opacity: step >= 3 ? 1 : 0,
+                  translateY: step >= 3 ? 0 : 10,
+                }}
+                onDidAnimate={(key, finished) => {
+                  if (key === 'opacity' && finished && step === 3) {
+                    setStep(4); // trigger next step
+                  }
+                }}
+                transition={{
+                  type: 'spring',
+                  damping: 12,
+                  stiffness: 150,
+                  delay: index * 200,
+                }}
+                key={index.toString()}
+                style={styles.categoryAnimatedView}
               >
-                <Text
-                  style={[
-                    styles.categoryTitle,
-                    {
-                      color:
-                        selectedCategory.index === index
-                          ? COLORS.primaryOrange
-                          : COLORS.primaryLightGrey,
-                    },
-                  ]}
+                <TouchableOpacity
+                  style={styles.categoryButton}
+                  onPress={() => {
+                    setSelectedCategory({
+                      index: index,
+                      category: categories[index],
+                    });
+                  }}
                 >
-                  {item}
-                </Text>
-                {/* circle */}
-                {selectedCategory.index === index && (
-                  <MotiView
-                    from={{
-                      opacity: 0,
-                      translateY: 10,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      translateY: 0,
-                    }}
-                    style={styles.activeCircle}
-                  />
-                )}
-              </TouchableOpacity>
-            </MotiView>
-          )}
-        />
-        {/* Products Section */}
-        <FlatList
-          scrollEnabled={false}
-          contentContainerStyle={styles.productContainerFlatlist}
-          data={ProductDataSample}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={() => (
-            <MotiView
-              from={{
-                opacity: 0,
-                translateY: 15,
-              }}
-              animate={{
-                opacity: 1,
-                translateY: 0,
-              }}
-              style={styles.emptyListContainer}
-            >
-              <Text style={styles.categoryTitle}>No Product Available</Text>
-            </MotiView>
-          )}
-          numColumns={2}
-          keyExtractor={item => item.name}
-          renderItem={({ index, item }) => (
-            <TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.categoryTitle,
+                      {
+                        color:
+                          selectedCategory.index === index
+                            ? COLORS.primaryOrange
+                            : COLORS.primaryLightGrey,
+                      },
+                    ]}
+                  >
+                    {item}
+                  </Text>
+                  {/* circle */}
+                  {selectedCategory.index === index && (
+                    <MotiView
+                      from={{
+                        opacity: 0,
+                        translateY: 10,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        translateY: 0,
+                      }}
+                      style={styles.activeCircle}
+                    />
+                  )}
+                </TouchableOpacity>
+              </MotiView>
+            )}
+          />
+          {/* Products Section */}
+          <FlatList
+            scrollEnabled={false}
+            contentContainerStyle={styles.productContainerFlatlist}
+            data={filteredProductsWithSearch}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={() => (
               <MotiView
                 from={{
                   opacity: 0,
                   translateY: 15,
                 }}
                 animate={{
-                  opacity: 1,
-                  translateY: 0,
+                  opacity: step >= 4 ? 1 : 0,
+                  translateY: step >= 4 ? 0 : 15,
                 }}
-                transition={{
-                  type: 'spring',
-                  damping: 12,
-                  stiffness: 30,
-                  delay: index * 200,
-                }}
+                style={styles.emptyListContainer}
               >
-                <ProductCard
-                  name={item.name}
-                  average_rate={item.average_rating}
-                  _id={item._id}
-                  image={item.images[0]}
-                  brand={item.brand}
-                  price={item.prices[0].price}
-                  onPress={() => { }}
-                />
+                <Text style={styles.categoryTitle}>No Product Available</Text>
               </MotiView>
-            </TouchableOpacity>
-          )}
-        />
+            )}
+            numColumns={2}
+            keyExtractor={item => item.name}
+            renderItem={({ index, item }) => (
+              <TouchableOpacity>
+                <MotiView
+                  from={{
+                    opacity: 0,
+                    translateY: 15,
+                  }}
+                  animate={{
+                    opacity: step >= 4 ? 1 : 0,
+                    translateY: step >= 4 ? 0 : 15,
+                  }}
+                  onDidAnimate={(key, finished) => {
+                    if (key === 'opacity' && finished && step === 4) {
+                      setStep(5); // trigger next step
+                    }
+                  }}
+                  transition={{
+                    type: 'spring',
+                    damping: 12,
+                    stiffness: 30,
+                    delay: index * 200,
+                  }}
+                >
+                  <ProductCard
+                    name={item.name}
+                    average_rate={item.average_rating}
+                    _id={item._id}
+                    image={item.images[0]}
+                    brand={item.brand}
+                    price={item.prices[0].price}
+                    onPress={() => { }}
+                  />
+                </MotiView>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView >
   )
