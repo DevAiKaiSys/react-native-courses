@@ -19,3 +19,9 @@ export type ProductCardType = {
     price: number;
     onPress?: () => void;
 };
+
+export type ItemPrice = {
+    size: 'S' | 'M' | 'L' | string;
+    // quantity: number;
+    price: number;
+};

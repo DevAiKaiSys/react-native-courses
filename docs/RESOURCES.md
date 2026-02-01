@@ -13,3 +13,4 @@
 - [React Navigation v7](https://reactnavigation.org/docs/7.x/getting-started/?framework=community-cli)
 - [react-native-linear-gradient](https://www.npmjs.com/package/react-native-linear-gradient)
 - [React Native Reanimated Carousel](https://rn-carousel.dev)
+- [Lottie React Native](https://www.npmjs.com/package/lottie-react-native)

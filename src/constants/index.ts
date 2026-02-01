@@ -66,9 +66,7 @@ const ProductDataSample = [
             'https://www.intotheam.com/cdn/shop/files/GalacticGroovesII_Mens_Tee_Nico_Front_1512x.jpg',
         ],
         prices: [
-            { size: 'S', price: 22.99 },
             { size: 'M', price: 24.99 },
-            { size: 'L', price: 27.99 },
         ],
         category: 'T-Shirts',
         brand: 'H&M',
@@ -288,4 +286,5 @@ export {
     homeTitle,
     categories,
     ProductDataSample,
+    lottieUrl
 };
