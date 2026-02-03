@@ -26,3 +26,7 @@ npm start -- --reset-cache
 ```bash
 npx react-native-asset
 ```
+
+```bash
+npm run lint
+```

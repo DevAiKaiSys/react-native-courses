@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { COLORS, FONT_FAMILY } from '../constants';
 
 type FooterPaymentType = {
@@ -18,7 +18,7 @@ const PaymentFooter = ({ price, onPress, buttonTitle, loading }: FooterPaymentTy
                     $ <Text style={styles.cardPriceAmount}>{Number(price).toFixed(0) || 0}</Text>
                 </Text>
             </View>
-            <TouchableOpacity style={[styles.buttonContainer, { opacity: loading ? 0.5 : 1 }]} onPress={onPress}>
+            <TouchableOpacity style={[styles.buttonContainer, loading && styles.buttonDisabled]} onPress={onPress}>
                 <Text style={styles.buttonText}>{buttonTitle}</Text>
             </TouchableOpacity>
         </View>
@@ -65,5 +65,8 @@ const styles = StyleSheet.create({
         fontFamily: FONT_FAMILY.poppins_semibold,
         fontSize: 18,
         color: COLORS.primaryVeryWhite
+    },
+    buttonDisabled: {
+        opacity: 0.5
     }
 })

@@ -17,16 +17,16 @@ type CartItemType = {
 const CartItem = ({ _id, name, image, brand, prices }: CartItemType) => {
     const dispatch = useAppDispatch()
 
-    const handleIncrementCartItemQuantity = (_id: string, size: string) => {
+    const handleIncrementCartItemQuantity = (id: string, size: string) => {
         dispatch({
             type: "cart/incrementQuantity",
-            payload: { _id, selectedSize: size }
+            payload: { _id: id, selectedSize: size }
         })
     }
-    const handleDecrementCartItemQuantity = (_id: string, size: string) => {
+    const handleDecrementCartItemQuantity = (id: string, size: string) => {
         dispatch({
             type: "cart/decrementQuantity",
-            payload: { _id, selectedSize: size }
+            payload: { _id: id, selectedSize: size }
         })
     }
 

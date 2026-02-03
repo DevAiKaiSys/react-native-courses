@@ -3,7 +3,8 @@ import React, { useEffect } from 'react'
 import { Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
-import { COLORS, FONT_FAMILY } from '../constants'
+import { COLORS } from '../constants/colors'
+import { FONT_FAMILY } from '../constants/fonts'
 import { AppRootState, useAppSelector } from '../store'
 import { ProductCardType } from '../types'
 
@@ -21,7 +22,7 @@ const ProductCard = ({ _id, image, name, brand, average_rate, price, onPress }: 
   // animate the opacity to 0.5 when in card
   useEffect(() => {
     opacity.value = withSpring(inCard ? 0.5 : 1)
-  }, [inCard])
+  }, [inCard, opacity])
 
   return (
     <LinearGradient
@@ -65,7 +66,7 @@ const ProductCard = ({ _id, image, name, brand, average_rate, price, onPress }: 
   )
 }
 
-export default ProductCard
+export default React.memo(ProductCard)
 
 const styles = StyleSheet.create({
   linearGradient: {

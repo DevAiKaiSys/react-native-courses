@@ -3,12 +3,14 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ArrowLeft, Star } from 'lucide-react-native';
 import { MotiText, MotiView } from 'moti';
 import { MotiPressable } from 'moti/interactions';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ImageSlider from '../components/ImageSlider';
 import PaymentFooter from '../components/PaymentFooter';
-import { COLORS, FONT_FAMILY, ProductDataSample } from '../constants';
+import { COLORS } from '../constants/colors';
+import { FONT_FAMILY } from '../constants/fonts';
+import { ProductDataSample } from '../constants/data';
 import { useAppDispatch } from '../store';
 import { useGetProductsQuery } from '../store/api';
 import { RootStackParamList } from '../types';
@@ -17,7 +19,7 @@ type ProductDetailsScreenProp = RouteProp<RootStackParamList, 'ProductDetails'>;
 const ProductDetailsScreen = () => {
     const route = useRoute<ProductDetailsScreenProp>();
     const { _id } = route.params;
-    const { data: products } = useGetProductsQuery(undefined, {
+    const { } = useGetProductsQuery(undefined, {
         pollingInterval: 5000,
         refetchOnFocus: true,
         refetchOnMountOrArgChange: true,
@@ -26,10 +28,12 @@ const ProductDetailsScreen = () => {
     const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
     // dummy data..
-    const productItem = ProductDataSample.filter(item => item._id === _id)[0];
-    const animatedTitle = [...productItem.name.split(' '), '"'].filter(
-        word => word !== '"',
-    );
+    const productItem = useMemo(() => ProductDataSample.filter(item => item._id === _id)[0], [_id]);
+    const animatedTitle = useMemo(() => {
+        return [...productItem.name.split(' '), '"'].filter(
+            word => word !== '"',
+        );
+    }, [productItem.name]);
     const [price, setPrice] = useState(productItem.prices[0]);
 
     // animation

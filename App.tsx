@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
+import { StatusBar, useColorScheme } from 'react-native';
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import {
@@ -29,6 +29,6 @@ function App() {
   );
 }
 
-const styles = StyleSheet.create({});
+
 
 export default App;

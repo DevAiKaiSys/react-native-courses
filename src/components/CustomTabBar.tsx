@@ -10,7 +10,7 @@ import { useAppSelector } from '../store';
 const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
     const { bottom } = useSafeAreaInsets();
     const { width } = Dimensions.get('window');
-    const cartList = useAppSelector((state: any) => state.cart.cartList)
+    const cartList = useAppSelector((rootState: any) => rootState.cart.cartList)
 
     return (
         <MotiView

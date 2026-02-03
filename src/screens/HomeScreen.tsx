@@ -2,11 +2,13 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Search, X } from 'lucide-react-native'
 import { MotiView } from 'moti'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Dimensions, FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ProductCard from '../components/ProductCard'
-import { categories, COLORS, FONT_FAMILY, homeTitle, ProductDataSample } from '../constants'
+import { COLORS } from '../constants/colors'
+import { FONT_FAMILY } from '../constants/fonts'
+import { categories, homeTitle, ProductDataSample } from '../constants/data'
 import { AppRootState, useAppDispatch, useAppSelector } from '../store'
 import { RootStackParamList } from '../types'
 
@@ -35,13 +37,18 @@ const HomeScreen = () => {
     return () => clearTimeout(timer);
   }, []);
   // filtered data
-  const AllCategories = selectedCategory.category === 'All';
-  const filteredProductsWithCategory = ProductDataSample?.filter(item =>
-    AllCategories ? item : item.category === selectedCategory.category,
-  );
-  const filteredProductsWithSearch = filteredProductsWithCategory?.filter(
-    item => item.name.toLowerCase().includes(searchText.toLowerCase()),
-  );
+  const filteredProductsWithCategory = useMemo(() => {
+    const AllCategories = selectedCategory.category === 'All';
+    return ProductDataSample?.filter(item =>
+      AllCategories ? item : item.category === selectedCategory.category,
+    );
+  }, [selectedCategory.category]);
+
+  const filteredProductsWithSearch = useMemo(() => {
+    return filteredProductsWithCategory?.filter(
+      item => item.name.toLowerCase().includes(searchText.toLowerCase()),
+    );
+  }, [filteredProductsWithCategory, searchText]);
 
   // add item to the cart
   const handleAddItemToTheCart = (product: any) => {
@@ -209,70 +216,83 @@ const HomeScreen = () => {
             contentContainerStyle={styles.productContainerFlatlist}
             data={filteredProductsWithSearch}
             showsVerticalScrollIndicator={false}
-            ListEmptyComponent={() => (
-              <MotiView
-                from={{
-                  opacity: 0,
-                  translateY: 15,
-                }}
-                animate={{
-                  opacity: step >= 4 ? 1 : 0,
-                  translateY: step >= 4 ? 0 : 15,
-                }}
-                style={styles.emptyListContainer}
-              >
-                <Text style={styles.categoryTitle}>No Product Available</Text>
-              </MotiView>
-            )}
+            ListEmptyComponent={<EmptyListMessage step={step} />}
             numColumns={2}
             keyExtractor={item => item.name}
-            renderItem={({ index, item }) => {
-              const isLeftColumn = index % 2 === 0; // -> 1, 3, 5, .....
-
-              return (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('ProductDetails', { _id: item._id })}
-                >
-                  <MotiView
-                    from={{
-                      opacity: 0,
-                      translateY: 15,
-                    }}
-                    animate={{
-                      opacity: step >= 4 ? 1 : 0,
-                      translateY: step >= 4 ? 0 : 15,
-                      marginRight: isLeftColumn ? 22 : 0,
-                    }}
-                    onDidAnimate={(key, finished) => {
-                      if (key === 'opacity' && finished && step === 4) {
-                        setStep(5) // trigger next step
-                      }
-                    }}
-                    transition={{
-                      type: 'spring',
-                      damping: 12,
-                      stiffness: 30,
-                      delay: index * 200,
-                    }}
-                  >
-                    <ProductCard
-                      name={item.name}
-                      average_rate={item.average_rating}
-                      _id={item._id}
-                      image={item.images[0]}
-                      brand={item.brand}
-                      price={item.prices[0].price}
-                      onPress={() => handleAddItemToTheCart(item)} />
-                  </MotiView>
-                </TouchableOpacity>
-              )
-            }}
+            renderItem={({ index, item }) => (
+              <RenderProductItem
+                item={item}
+                index={index}
+                navigation={navigation}
+                step={step}
+                setStep={setStep}
+                handleAddItemToTheCart={handleAddItemToTheCart}
+              />
+            )}
           />
         </View>
       </ScrollView>
     </SafeAreaView >
   )
 }
+
+const RenderProductItem = React.memo(({ item, index, navigation, step, setStep, handleAddItemToTheCart }: any) => {
+  const isLeftColumn = index % 2 === 0;
+
+  return (
+    <TouchableOpacity
+      onPress={() => navigation.navigate('ProductDetails', { _id: item._id })}
+    >
+      <MotiView
+        from={{
+          opacity: 0,
+          translateY: 15,
+        }}
+        animate={{
+          opacity: step >= 4 ? 1 : 0,
+          translateY: step >= 4 ? 0 : 15,
+          marginRight: isLeftColumn ? 22 : 0,
+        }}
+        onDidAnimate={(key, finished) => {
+          if (key === 'opacity' && finished && step === 4) {
+            setStep(5) // trigger next step
+          }
+        }}
+        transition={{
+          type: 'spring',
+          damping: 12,
+          stiffness: 30,
+          delay: index * 200,
+        }}
+      >
+        <ProductCard
+          name={item.name}
+          average_rate={item.average_rating}
+          _id={item._id}
+          image={item.images[0]}
+          brand={item.brand}
+          price={item.prices[0].price}
+          onPress={() => handleAddItemToTheCart(item)} />
+      </MotiView>
+    </TouchableOpacity>
+  )
+})
+
+const EmptyListMessage = ({ step }: { step: number }) => (
+  <MotiView
+    from={{
+      opacity: 0,
+      translateY: 15,
+    }}
+    animate={{
+      opacity: step >= 4 ? 1 : 0,
+      translateY: step >= 4 ? 0 : 15,
+    }}
+    style={styles.emptyListContainer}
+  >
+    <Text style={styles.categoryTitle}>No Product Available</Text>
+  </MotiView>
+)
 
 export default HomeScreen
 

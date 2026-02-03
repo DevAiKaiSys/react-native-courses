@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Image, Dimensions } from 'react-native';
+import { Dimensions, Image, StyleSheet, View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 
 const { width } = Dimensions.get('window');
@@ -44,7 +44,7 @@ const ImageSlider = ({ imageLists }: ImageSliderProp) => {
             key={index}
             style={[
               styles.dot,
-              { backgroundColor: activeIndex === index ? 'blue' : 'silver' }
+              activeIndex === index ? styles.activeDot : styles.inactiveDot
             ]}
           />
         ))}
@@ -84,5 +84,11 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     marginHorizontal: 5,
+  },
+  activeDot: {
+    backgroundColor: 'blue',
+  },
+  inactiveDot: {
+    backgroundColor: 'silver',
   },
 });
