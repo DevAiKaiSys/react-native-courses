@@ -1,6 +1,6 @@
 import { StaticParamList } from "@react-navigation/native";
-import { RootStack } from "../navigation/RootNavigator";
 import { MainTabsNavigation } from "../navigation/MainTabsNavigation";
+import { RootStack } from "../navigation/RootNavigator";
 
 export type RootStackParamList = Omit<StaticParamList<typeof RootStack>, 'ProductDetails'> & {
     ProductDetails: {
@@ -21,7 +21,21 @@ export type ProductCardType = {
 };
 
 export type ItemPrice = {
+    currency: '$';
     size: 'S' | 'M' | 'L' | string;
-    // quantity: number;
+    quantity: number;
     price: number;
+};
+export type CartProductType = {
+    _id?: string;
+    images: string[];
+    name: string;
+    brand: string;
+    prices: ItemPrice[];
+};
+
+export type CartSliceType = {
+    cartList: CartProductType[];
+    totalPrice: number; // -> calc the total price
+    totalItems: number;
 };

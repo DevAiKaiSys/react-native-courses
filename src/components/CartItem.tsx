@@ -1,8 +1,9 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { COLORS, FONT_FAMILY } from '../constants';
-import { LinearGradient } from 'react-native-linear-gradient';
 import { Minus, Plus } from 'lucide-react-native';
+import React from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { LinearGradient } from 'react-native-linear-gradient';
+import { COLORS, FONT_FAMILY } from '../constants';
+import { useAppDispatch } from '../store';
 import { ItemPrice } from '../types';
 
 type CartItemType = {
@@ -13,10 +14,27 @@ type CartItemType = {
     prices: ItemPrice[]
 }
 
-const CartItem = ({ name, image, brand, prices }: CartItemType) => {
+const CartItem = ({ _id, name, image, brand, prices }: CartItemType) => {
+    const dispatch = useAppDispatch()
+
+    const handleIncrementCartItemQuantity = (_id: string, size: string) => {
+        dispatch({
+            type: "cart/incrementQuantity",
+            payload: { _id, selectedSize: size }
+        })
+    }
+    const handleDecrementCartItemQuantity = (_id: string, size: string) => {
+        dispatch({
+            type: "cart/decrementQuantity",
+            payload: { _id, selectedSize: size }
+        })
+    }
+
+    const mainPrices = prices.filter(item => item.quantity !== 0)
+
     return (
         <View>
-            {prices.length > 1 ? (
+            {mainPrices.length > 1 ? (
                 <LinearGradient
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
@@ -36,21 +54,22 @@ const CartItem = ({ name, image, brand, prices }: CartItemType) => {
                         </View>
                     </View>
 
-                    {prices.map((item, index) => (
+                    {mainPrices.map((item, index) => (
                         <View key={index} style={styles.cartItemRowQntContainer} >
                             <View style={styles.cartItemSizeContainer}>
                                 <View style={styles.sizeBoxContainer}>
                                     <Text style={styles.sizeBoxText}> {item.size}</Text>
                                 </View>
                                 <Text style={styles.cardPriceCurrency}>
-                                    $ <Text style={styles.cardPriceAmount}>{item.price}</Text>
+                                    {item.currency} <Text style={styles.cardPriceAmount}>{item.price}</Text>
                                 </Text>
                             </View>
 
                             <View style={styles.cartItemQntContainer}>
                                 <TouchableOpacity
                                     style={styles.addToCardButton}
-                                    onPress={() => { }}>
+                                    onPress={() => handleDecrementCartItemQuantity(_id, item.size)}
+                                >
                                     <Minus
                                         color={COLORS.primaryWhite}
                                         size={16}
@@ -58,12 +77,12 @@ const CartItem = ({ name, image, brand, prices }: CartItemType) => {
                                 </TouchableOpacity>
 
                                 <View style={styles.cartItemQnt}>
-                                    <Text style={styles.cartItemQntText}> {3} </Text>
+                                    <Text style={styles.cartItemQntText}> {item.quantity} </Text>
                                 </View>
 
                                 <TouchableOpacity
                                     style={styles.addToCardButton}
-                                    onPress={() => { }}
+                                    onPress={() => handleIncrementCartItemQuantity(_id, item.size)}
                                 >
                                     <Plus
                                         color={COLORS.primaryWhite}
@@ -99,28 +118,30 @@ const CartItem = ({ name, image, brand, prices }: CartItemType) => {
                         {/* size & price */}
                         <View style={styles.cartItemSingleSizeContainer}>
                             <View style={styles.sizeBoxContainer}>
-                                <Text style={styles.sizeBoxText}> {prices[0].size}</Text>
+                                <Text style={styles.sizeBoxText}> {mainPrices[0].size}</Text>
                             </View>
                             <Text style={styles.cardPriceCurrency}>
-                                $ <Text style={styles.cardPriceAmount}>{prices[0].price}</Text>
+                                {mainPrices[0].currency} <Text style={styles.cardPriceAmount}>{mainPrices[0].price}</Text>
                             </Text>
                         </View>
 
                         <View style={styles.cartItemSingleQntContainer}>
                             <TouchableOpacity
                                 style={styles.addToCardButton}
-                                onPress={() => { }}>
+                                onPress={() => handleDecrementCartItemQuantity(_id, mainPrices[0].size)}
+                            >
                                 <Minus
                                     color={COLORS.primaryWhite}
                                     size={16}
                                 />
                             </TouchableOpacity>
                             <View style={styles.cartItemQnt}>
-                                <Text style={styles.cartItemQntText}> {3} </Text>
+                                <Text style={styles.cartItemQntText}> {mainPrices[0].quantity} </Text>
                             </View>
                             <TouchableOpacity
                                 style={styles.addToCardButton}
-                                onPress={() => { }}>
+                                onPress={() => handleIncrementCartItemQuantity(_id, mainPrices[0].size)}
+                            >
                                 <Plus
                                     color={COLORS.primaryWhite}
                                     size={16}

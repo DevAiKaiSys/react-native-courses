@@ -1,13 +1,14 @@
-import { Dimensions, FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { categories, COLORS, FONT_FAMILY, homeTitle, ProductDataSample } from '../constants'
-import { MotiView } from 'moti'
-import { Search, X } from 'lucide-react-native'
-import ProductCard from '../components/ProductCard'
 import { useNavigation } from '@react-navigation/native'
-import { RootStackParamList } from '../types'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { Search, X } from 'lucide-react-native'
+import { MotiView } from 'moti'
+import React, { useEffect, useState } from 'react'
+import { Dimensions, FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import ProductCard from '../components/ProductCard'
+import { categories, COLORS, FONT_FAMILY, homeTitle, ProductDataSample } from '../constants'
+import { AppRootState, useAppDispatch, useAppSelector } from '../store'
+import { RootStackParamList } from '../types'
 
 const HomeScreen = () => {
   /* const animatedTitle = [...homeTitle.split(' '), '"'].filter(
@@ -16,6 +17,11 @@ const HomeScreen = () => {
   const animatedTitle = homeTitle.trim().split(/\s+/);
   const [searchText, setSearchText] = useState('');
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  // use selector...
+  const dispatch = useAppDispatch();
+  const totalProduct = useAppSelector(
+    (state: AppRootState) => state.cart.cartList,
+  );
   const [selectedCategory, setSelectedCategory] = useState({
     index: 0,
     category: categories[0],
@@ -36,6 +42,18 @@ const HomeScreen = () => {
   const filteredProductsWithSearch = filteredProductsWithCategory?.filter(
     item => item.name.toLowerCase().includes(searchText.toLowerCase()),
   );
+
+  // add item to the cart
+  const handleAddItemToTheCart = (product: any) => {
+    dispatch({
+      type: 'cart/addToCart',
+      payload: {
+        ...product,
+        selectedSize: product.prices[0].size,
+      },
+    });
+    console.log(totalProduct);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -208,43 +226,47 @@ const HomeScreen = () => {
             )}
             numColumns={2}
             keyExtractor={item => item.name}
-            renderItem={({ index, item }) => (
-              <TouchableOpacity
-                onPress={() => navigation.navigate('ProductDetails', { _id: item._id })}
-              >
-                <MotiView
-                  from={{
-                    opacity: 0,
-                    translateY: 15,
-                  }}
-                  animate={{
-                    opacity: step >= 4 ? 1 : 0,
-                    translateY: step >= 4 ? 0 : 15,
-                  }}
-                  onDidAnimate={(key, finished) => {
-                    if (key === 'opacity' && finished && step === 4) {
-                      setStep(5); // trigger next step
-                    }
-                  }}
-                  transition={{
-                    type: 'spring',
-                    damping: 12,
-                    stiffness: 30,
-                    delay: index * 200,
-                  }}
+            renderItem={({ index, item }) => {
+              const isLeftColumn = index % 2 === 0; // -> 1, 3, 5, .....
+
+              return (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('ProductDetails', { _id: item._id })}
                 >
-                  <ProductCard
-                    name={item.name}
-                    average_rate={item.average_rating}
-                    _id={item._id}
-                    image={item.images[0]}
-                    brand={item.brand}
-                    price={item.prices[0].price}
-                    onPress={() => { }}
-                  />
-                </MotiView>
-              </TouchableOpacity>
-            )}
+                  <MotiView
+                    from={{
+                      opacity: 0,
+                      translateY: 15,
+                    }}
+                    animate={{
+                      opacity: step >= 4 ? 1 : 0,
+                      translateY: step >= 4 ? 0 : 15,
+                      marginRight: isLeftColumn ? 22 : 0,
+                    }}
+                    onDidAnimate={(key, finished) => {
+                      if (key === 'opacity' && finished && step === 4) {
+                        setStep(5) // trigger next step
+                      }
+                    }}
+                    transition={{
+                      type: 'spring',
+                      damping: 12,
+                      stiffness: 30,
+                      delay: index * 200,
+                    }}
+                  >
+                    <ProductCard
+                      name={item.name}
+                      average_rate={item.average_rating}
+                      _id={item._id}
+                      image={item.images[0]}
+                      brand={item.brand}
+                      price={item.prices[0].price}
+                      onPress={() => handleAddItemToTheCart(item)} />
+                  </MotiView>
+                </TouchableOpacity>
+              )
+            }}
           />
         </View>
       </ScrollView>

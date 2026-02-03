@@ -1,20 +1,30 @@
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '../types';
-import { COLORS, FONT_FAMILY, ProductDataSample } from '../constants';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ArrowLeft, Star } from 'lucide-react-native';
-import ImageSlider from '../components/ImageSlider';
 import { MotiText, MotiView } from 'moti';
 import { MotiPressable } from 'moti/interactions';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ImageSlider from '../components/ImageSlider';
 import PaymentFooter from '../components/PaymentFooter';
+import { COLORS, FONT_FAMILY, ProductDataSample } from '../constants';
+import { useAppDispatch } from '../store';
+import { useGetProductsQuery } from '../store/api';
+import { RootStackParamList } from '../types';
 
 type ProductDetailsScreenProp = RouteProp<RootStackParamList, 'ProductDetails'>;
 const ProductDetailsScreen = () => {
     const route = useRoute<ProductDetailsScreenProp>();
     const { _id } = route.params;
-    const navigation = useNavigation();
+    const { data: products } = useGetProductsQuery(undefined, {
+        pollingInterval: 5000,
+        refetchOnFocus: true,
+        refetchOnMountOrArgChange: true,
+    });
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const dispatch = useAppDispatch();
+    const [loading, setLoading] = useState(false);
     // dummy data..
     const productItem = ProductDataSample.filter(item => item._id === _id)[0];
     const animatedTitle = [...productItem.name.split(' '), '"'].filter(
@@ -31,6 +41,20 @@ const ProductDetailsScreen = () => {
         }, 200);
         return () => clearTimeout(timer);
     }, []);
+
+    // add item to the cart
+    const handleAddItemToTheCart = (product: any, size: string) => {
+        setLoading(true);
+        dispatch({
+            type: 'cart/addToCart',
+            payload: {
+                ...product,
+                selectedSize: size,
+            },
+        });
+        navigation.navigate('MainTabs', { screen: 'Cart' });
+        setLoading(false);
+    };
 
     return (
         <SafeAreaView style={styles.screenContainer}>
@@ -230,9 +254,9 @@ const ProductDetailsScreen = () => {
 
                 <PaymentFooter
                     price={price.price}
-                    onPress={() => { }}
+                    onPress={() => handleAddItemToTheCart(productItem, price.size)}
                     buttonTitle={'Add To Cart'}
-                    loading={false}
+                    loading={loading}
                 />
             </ScrollView>
         </SafeAreaView>

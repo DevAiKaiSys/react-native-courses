@@ -1,14 +1,18 @@
-import { ScrollView, StyleSheet, View } from 'react-native'
-import React from 'react'
-import { COLORS, ProductDataSample } from '../constants'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { MotiView } from 'moti'
+import React from 'react'
+import { ScrollView, StyleSheet, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import CartItem from '../components/CartItem'
 import EmptyListAnimation from '../components/EmptyListAnimation'
 import PaymentFooter from '../components/PaymentFooter'
-import CartItem from '../components/CartItem'
+import { COLORS } from '../constants'
+import { AppRootState, useAppDispatch, useAppSelector } from '../store'
 
 const CartScreen = () => {
-  const CartList = ProductDataSample.slice(0, 3);
+  const CartList = useAppSelector((state: AppRootState) => state.cart.cartList)
+  const totalPrice = useAppSelector((state: AppRootState) => state.cart.totalPrice)
+  console.log("CartList:", CartList);
+  const dispatch = useAppDispatch()
 
   return (
     <SafeAreaView style={styles.cartContainer}>
@@ -37,8 +41,11 @@ const CartScreen = () => {
           )}
         </View>
         <PaymentFooter
-          price={12.99}
-          onPress={() => { }}
+          price={totalPrice}
+          onPress={() => dispatch({
+            type: "cart/clearCart",
+            payload: {}
+          })}
           buttonTitle={"Order Now"}
           loading={false}
         />

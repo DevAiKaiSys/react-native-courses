@@ -14,3 +14,6 @@
 - [react-native-linear-gradient](https://www.npmjs.com/package/react-native-linear-gradient)
 - [React Native Reanimated Carousel](https://rn-carousel.dev)
 - [Lottie React Native](https://www.npmjs.com/package/lottie-react-native)
+- [Redux Toolkit](https://redux.js.org/introduction/getting-started#redux-toolkit)
+- [Redux Persist](https://www.npmjs.com/package/redux-persist)
+- [React Native Async Storage](https://www.npmjs.com/package/@react-native-async-storage/async-storage)

@@ -1,21 +1,27 @@
-import { Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { ProductCardType } from '../types'
 import { Plus, Star } from 'lucide-react-native'
-import { COLORS, FONT_FAMILY } from '../constants'
+import React, { useEffect } from 'react'
+import { Dimensions, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
+import { COLORS, FONT_FAMILY } from '../constants'
+import { AppRootState, useAppSelector } from '../store'
+import { ProductCardType } from '../types'
 
 const IMAGE_WIDTH = Dimensions.get('window').width * 0.32
 const ProductCard = ({ _id, image, name, brand, average_rate, price, onPress }: ProductCardType) => {
-  const opacity = useSharedValue(1);
-  const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
-
+  const opacity = useSharedValue(1)
+  const inCard = useAppSelector((state: AppRootState) => state.cart.cartList.some(item => item._id === _id))
+  const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity)
+  // know if that product is existed in the cartList -> to disable the button
   const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: opacity.value,
-    };
-  });
+    }
+  })
+  // animate the opacity to 0.5 when in card
+  useEffect(() => {
+    opacity.value = withSpring(inCard ? 0.5 : 1)
+  }, [inCard])
 
   return (
     <LinearGradient
@@ -45,6 +51,7 @@ const ProductCard = ({ _id, image, name, brand, average_rate, price, onPress }: 
             $ <Text style={styles.cardPriceAmount}>{price}</Text>
           </Text>
           <AnimatedTouchableOpacity
+            disabled={inCard}
             style={[animatedStyle, styles.addToCardButton]}
             onPress={onPress}>
             <Plus

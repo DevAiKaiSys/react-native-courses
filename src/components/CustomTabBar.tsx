@@ -1,14 +1,16 @@
-import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
-import { COLORS } from '../constants'
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { MotiView } from 'moti';
-import Animated, { LinearTransition, FadeInRight, FadeOutRight } from 'react-native-reanimated'
+import React from 'react';
+import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeInRight, FadeOutRight, LinearTransition } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { COLORS } from '../constants';
+import { useAppSelector } from '../store';
 
 const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
     const { bottom } = useSafeAreaInsets();
     const { width } = Dimensions.get('window');
+    const cartList = useAppSelector((state: any) => state.cart.cartList)
 
     return (
         <MotiView
@@ -69,9 +71,9 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
                         layout={LinearTransition.springify().damping(80).stiffness(200)}
                         animate={styles.itemView}
                     >
-                        {!isFocused && route.name === 'Cart' && (
+                        {!isFocused && route.name === 'Cart' && cartList.length > 0 && (
                             <View style={styles.productNumberContainer}>
-                                <Text style={styles.productNumber}>0</Text>
+                                <Text style={styles.productNumber}>{cartList.length} </Text>
                             </View>
                         )}
 

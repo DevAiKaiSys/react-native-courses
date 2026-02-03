@@ -41,3 +41,15 @@ Custom screen tab Icon [Options for screens](https://reactnavigation.org/docs/sc
 npm install react-native-reanimated react-native-gesture-handler
 npm install react-native-reanimated-carousel
 ```
+
+# [Redux Toolkit](https://redux.js.org/introduction/getting-started#redux-toolkit)
+
+```bash
+npm install @reduxjs/toolkit react-redux
+```
+
+# [AsyncStorage](https://react-native-async-storage.github.io/2.0/Installation/)
+
+```bash
+npm install redux-persist @react-native-async-storage/async-storage
+```
