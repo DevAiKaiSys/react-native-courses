@@ -5,12 +5,13 @@ import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInRight, FadeOutRight, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS } from '../constants';
-import { useAppSelector } from '../store';
+import { useAppSelector } from '../app/hooks';
+import { selectCount } from '../features/cart/cartSlice';
 
 const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
     const { bottom } = useSafeAreaInsets();
     const { width } = Dimensions.get('window');
-    const cartList = useAppSelector((rootState: any) => rootState.cart.cartList)
+    const cartCount = useAppSelector(selectCount)
 
     return (
         <MotiView
@@ -71,9 +72,9 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
                         layout={LinearTransition.springify().damping(80).stiffness(200)}
                         animate={styles.itemView}
                     >
-                        {!isFocused && route.name === 'Cart' && cartList.length > 0 && (
+                        {!isFocused && route.name === 'Cart' && cartCount > 0 && (
                             <View style={styles.productNumberContainer}>
-                                <Text style={styles.productNumber}>{cartList.length} </Text>
+                                <Text style={styles.productNumber}>{cartCount} </Text>
                             </View>
                         )}
 

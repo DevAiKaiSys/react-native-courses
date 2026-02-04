@@ -9,8 +9,8 @@ import ProductCard from '../components/ProductCard'
 import { COLORS } from '../constants/colors'
 import { FONT_FAMILY } from '../constants/fonts'
 import { categories, homeTitle, ProductDataSample } from '../constants/data'
-import { AppRootState, useAppDispatch, useAppSelector } from '../store'
 import { RootStackParamList } from '../types'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
 
 const HomeScreen = () => {
   /* const animatedTitle = [...homeTitle.split(' '), '"'].filter(
@@ -22,7 +22,7 @@ const HomeScreen = () => {
   // use selector...
   const dispatch = useAppDispatch();
   const totalProduct = useAppSelector(
-    (state: AppRootState) => state.cart.cartList,
+    (state) => state.cart.cartList,
   );
   const [selectedCategory, setSelectedCategory] = useState({
     index: 0,

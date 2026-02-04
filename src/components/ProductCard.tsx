@@ -5,13 +5,13 @@ import LinearGradient from 'react-native-linear-gradient'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { COLORS } from '../constants/colors'
 import { FONT_FAMILY } from '../constants/fonts'
-import { AppRootState, useAppSelector } from '../store'
 import { ProductCardType } from '../types'
+import { useAppSelector } from '../app/hooks'
 
 const IMAGE_WIDTH = Dimensions.get('window').width * 0.32
 const ProductCard = ({ _id, image, name, brand, average_rate, price, onPress }: ProductCardType) => {
   const opacity = useSharedValue(1)
-  const inCard = useAppSelector((state: AppRootState) => state.cart.cartList.some(item => item._id === _id))
+  const inCard = useAppSelector((state) => state.cart.cartList.some(item => item._id === _id))
   const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity)
   // know if that product is existed in the cartList -> to disable the button
   const animatedStyle = useAnimatedStyle(() => {

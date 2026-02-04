@@ -6,11 +6,11 @@ import CartItem from '../components/CartItem'
 import EmptyListAnimation from '../components/EmptyListAnimation'
 import PaymentFooter from '../components/PaymentFooter'
 import { COLORS } from '../constants'
-import { AppRootState, useAppDispatch, useAppSelector } from '../store'
+import { useAppSelector, useAppDispatch } from '../app/hooks'
 
 const CartScreen = () => {
-  const CartList = useAppSelector((state: AppRootState) => state.cart.cartList)
-  const totalPrice = useAppSelector((state: AppRootState) => state.cart.totalPrice)
+  const CartList = useAppSelector((state) => state.cart.cartList)
+  const totalPrice = useAppSelector((state) => state.cart.totalPrice)
   console.log("CartList:", CartList);
   const dispatch = useAppDispatch()
 

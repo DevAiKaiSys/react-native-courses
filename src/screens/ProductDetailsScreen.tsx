@@ -11,9 +11,9 @@ import PaymentFooter from '../components/PaymentFooter';
 import { COLORS } from '../constants/colors';
 import { FONT_FAMILY } from '../constants/fonts';
 import { ProductDataSample } from '../constants/data';
-import { useAppDispatch } from '../store';
-import { useGetProductsQuery } from '../store/api';
 import { RootStackParamList } from '../types';
+import { useAppDispatch } from '../app/hooks';
+import { useGetProductsQuery } from '../features/cart/cartAPISlice';
 
 type ProductDetailsScreenProp = RouteProp<RootStackParamList, 'ProductDetails'>;
 const ProductDetailsScreen = () => {

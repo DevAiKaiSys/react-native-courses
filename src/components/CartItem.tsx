@@ -3,8 +3,8 @@ import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'react-native-linear-gradient';
 import { COLORS, FONT_FAMILY } from '../constants';
-import { useAppDispatch } from '../store';
 import { ItemPrice } from '../types';
+import { useAppDispatch } from '../app/hooks';
 
 type CartItemType = {
     _id: string;
@@ -18,12 +18,14 @@ const CartItem = ({ _id, name, image, brand, prices }: CartItemType) => {
     const dispatch = useAppDispatch()
 
     const handleIncrementCartItemQuantity = (id: string, size: string) => {
+        console.log("Incrementing item:", id, "Size:", size);
         dispatch({
             type: "cart/incrementQuantity",
             payload: { _id: id, selectedSize: size }
         })
     }
     const handleDecrementCartItemQuantity = (id: string, size: string) => {
+        console.log("Decrementing item:", id, "Size:", size);
         dispatch({
             type: "cart/decrementQuantity",
             payload: { _id: id, selectedSize: size }

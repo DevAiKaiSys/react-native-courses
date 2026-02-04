@@ -30,3 +30,7 @@ npx react-native-asset
 ```bash
 npm run lint
 ```
+
+```bash
+npx tsc --noEmit
+```
